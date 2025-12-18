@@ -5,7 +5,7 @@
 ![SQLite](https://img.shields.io/badge/SQLite-Database-blue?style=for-the-badge\&logo=sqlite)
 ![Ollama](https://img.shields.io/badge/AI-Ollama%20%7C%20Qwen-orange?style=for-the-badge)
 
-Um sistema automatizado de gestão financeira e cobrança via WhatsApp, capaz de **ler e validar comprovantes bancários (Pix) automaticamente** utilizando Inteligência Artificial (Vision LLM) rodando localmente de forma 100% gratuita.
+Um sistema automatizado de gestão financeira e cobrança via WhatsApp, capaz de **ler e validar comprovantes bancários (Pix) automaticamente** utilizando Inteligência Artificial (Vision LLM) rodando localmente.
 
 O projeto elimina a necessidade de conferência manual de comprovantes e planilhas, integrando um chatbot conversacional, um agendador de cobranças e um motor de OCR inteligente que protege contra duplicidade e fraudes.
 
@@ -71,9 +71,55 @@ O projeto elimina a necessidade de conferência manual de comprovantes e planilh
 ollama pull qwen3-vl:8b
 ```
 
-3. **WPPConnect Server** (ou outra API de WhatsApp compatível) rodando.
+3. **WPPConnect Server** rodando e **conectado ao WhatsApp**.
+
+> 🔗 Repositório oficial: [https://github.com/wppconnect-team/wppconnect-server](https://github.com/wppconnect-team/wppconnect-server)
+
+⚠️ **Obrigatório:** o bot **só funciona** se o WPPConnect Server estiver **em execução**, com a **sessão autenticada (QR Code já lido)** antes de iniciar o `app.py`.
 
 ### Passo a Passo
+
+> ⚠️ **Ordem obrigatória de execução:**
+>
+> 1. Iniciar **Ollama**
+> 2. Iniciar e autenticar o **WPPConnect Server**
+> 3. Somente depois iniciar o **Finance Bot**
+
+---
+
+### Configuração do WPPConnect Server (Webhook)
+
+O **WPPConnect Server** deve estar configurado para enviar eventos ao bot via **Webhook**.
+
+No arquivo de configuração do WPPConnect (`config.ts` ou equivalente), adicione ou ajuste:
+
+```ts
+webhook: {
+  url: "http://localhost:5000/webhook",
+  autoDownload: true,
+  uploadS3: false,
+  readMessage: false,
+  allUnreadOnStart: false,
+  allPayload: true,
+  listenAcks: true,
+  onPresenceChanged: true,
+  onParticipantsChanged: true,
+  onReactionMessage: true,
+  onPollResponse: true,
+  onRevokedMessage: true,
+  onLabelUpdated: true,
+  onSelfMessage: true,
+  ignore: ['status@broadcast'],
+},
+```
+
+📌 **Importante:**
+
+* O endpoint `/webhook` é exposto pelo Flask (`app.py`).
+* O bot **não recebe mensagens** se o webhook não estiver configurado.
+* O servidor do WhatsApp **precisa estar online e conectado** antes de iniciar o bot.
+
+---
 
 1. **Clone o repositório:**
 
