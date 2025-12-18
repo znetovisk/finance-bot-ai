@@ -1,0 +1,6 @@
+__pycache__/
+wppconnect-server-2.8.7/
+*.pyc
+.env
+finance.db
+*.log
